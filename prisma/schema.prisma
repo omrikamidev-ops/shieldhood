@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model GlobalSettings {
+  id                       Int      @id @default(autoincrement())
+  businessName             String   @default("Shield Hood Services")
+  primaryPhone             String
+  primaryEmail             String?
+  baseDomain               String
+  defaultStreetAddress     String?
+  defaultCity              String?
+  defaultState             String?
+  defaultZip               String?
+  defaultCountry           String?
+  globalServiceDescription String?
+  globalFAQ                String?
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+}
+
+model Location {
+  id                      Int      @id @default(autoincrement())
+  city                    String
+  regionOrCounty          String
+  state                   String
+  country                 String   @default("USA")
+  slug                    String   @unique
+  pageTitleOverride       String?
+  metaDescriptionOverride String?
+  h1Override              String?
+  streetAddress           String?
+  zip                     String?
+  phoneOverride           String?
+  shortIntro              String
+  longIntro               String
+  mainBody                String
+  servicesIntro           String?
+  neighborhoodsOrAreas    String?
+  localLandmarks          String?
+  localStatsOrRegulationNotes String?
+  localTestimonials       String?
+  locationFAQ             String?
+  googleMapsEmbedUrl      String
+  published               Boolean  @default(false)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  services LocationService[]
+  leads     Lead[]
+  aiContent AIContentLog[]
+}
+
+model Service {
+  id               Int      @id @default(autoincrement())
+  name             String
+  slug             String   @unique
+  shortDescription String?
+  longDescription  String?
+  isPrimary        Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  locations LocationService[]
+}
+
+model LocationService {
+  id         Int      @id @default(autoincrement())
+  locationId Int
+  serviceId  Int
+  localNotes String?
+
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  service  Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([locationId, serviceId])
+}
+
+model Lead {
+  id             Int       @id @default(autoincrement())
+  name           String
+  email          String?
+  phone          String?
+  restaurantName String?
+  message        String?
+  city           String?
+  locationId     Int?
+  pageUrl        String?
+  createdAt      DateTime  @default(now())
+
+  location Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
+}
+
+model AIContentLog {
+  id         Int      @id @default(autoincrement())
+  locationId Int?
+  scope      String
+  createdAt  DateTime @default(now())
+
+  location Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
+}
