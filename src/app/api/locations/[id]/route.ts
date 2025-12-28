@@ -81,6 +81,7 @@ export async function PATCH(
         shortIntro: body.shortIntro ?? existing.shortIntro,
         longIntro: body.longIntro ?? existing.longIntro,
         mainBody: body.mainBody ?? existing.mainBody,
+        whatTypicallyHappensNext: body.whatTypicallyHappensNext,
         servicesIntro: body.servicesIntro,
         neighborhoodsOrAreas: body.neighborhoodsOrAreas,
         localLandmarks: body.localLandmarks,

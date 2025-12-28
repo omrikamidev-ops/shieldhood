@@ -72,6 +72,7 @@ export async function POST(request: Request) {
         shortIntro: body.shortIntro || "",
         longIntro: body.longIntro || "",
         mainBody: body.mainBody || body.longIntro || body.shortIntro || "City-specific hood cleaning details.",
+        whatTypicallyHappensNext: body.whatTypicallyHappensNext,
         servicesIntro: body.servicesIntro,
         neighborhoodsOrAreas: body.neighborhoodsOrAreas,
         localLandmarks: body.localLandmarks,

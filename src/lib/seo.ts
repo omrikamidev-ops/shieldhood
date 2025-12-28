@@ -84,3 +84,39 @@ export const buildFaqJsonLd = (faqs: FAQItem[]) => ({
     },
   })),
 });
+
+export const buildBreadcrumbJsonLd = ({
+  settings,
+  location,
+  canonicalUrl,
+}: {
+  settings: GlobalSettings;
+  location: Pick<Location, "city" | "state" | "slug">;
+  canonicalUrl: string;
+}) => {
+  const base = stripTrailingSlash(settings.baseDomain || "https://shieldhoodservice.com");
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: `${base}/`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Locations",
+        item: `${base}/locations`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: `${location.city}, ${location.state}`,
+        item: canonicalUrl,
+      },
+    ],
+  };
+};

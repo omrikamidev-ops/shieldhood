@@ -24,6 +24,7 @@ type LocationInitial = {
   shortIntro?: string;
   longIntro?: string;
   mainBody?: string;
+  whatTypicallyHappensNext?: string | null;
   servicesIntro?: string | null;
   neighborhoodsOrAreas?: string | null;
   localStatsOrRegulationNotes?: string | null;
@@ -57,6 +58,7 @@ export function LocationForm({ mode, initialData }: LocationFormProps) {
     shortIntro: initialData?.shortIntro || "",
     longIntro: initialData?.longIntro || "",
     mainBody: initialData?.mainBody || "",
+    whatTypicallyHappensNext: initialData?.whatTypicallyHappensNext || "",
     servicesIntro: initialData?.servicesIntro || "",
     neighborhoodsOrAreas: initialData?.neighborhoodsOrAreas || "",
     localStatsOrRegulationNotes: initialData?.localStatsOrRegulationNotes || "",
@@ -156,6 +158,10 @@ export function LocationForm({ mode, initialData }: LocationFormProps) {
         handleChange("shortIntro", data.shortIntro || formState.shortIntro);
         handleChange("longIntro", data.longIntro || formState.longIntro);
         handleChange("mainBody", data.mainBody || formState.mainBody);
+        handleChange(
+          "whatTypicallyHappensNext",
+          data.whatTypicallyHappensNext || formState.whatTypicallyHappensNext,
+        );
         handleChange("servicesIntro", data.servicesIntro || formState.servicesIntro);
         handleChange(
           "localStatsOrRegulationNotes",
@@ -325,6 +331,13 @@ export function LocationForm({ mode, initialData }: LocationFormProps) {
         value={formState.mainBody}
         onChange={(value) => handleChange("mainBody", value)}
         placeholder="Full city-specific content about codes, inspections, schedules, and how we help."
+      />
+      <TextArea
+        label="What typically happens next (2-3 paragraphs explaining the process flow)"
+        rows={8}
+        value={formState.whatTypicallyHappensNext}
+        onChange={(value) => handleChange("whatTypicallyHappensNext", value)}
+        placeholder="Explain the typical process from initial contact through service completion. Help readers understand what to expect step-by-step."
       />
       <TextArea
         label="Services intro"

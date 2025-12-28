@@ -13,6 +13,7 @@ import {
 } from "@/lib/data";
 import { mergeFaqs } from "@/lib/faq";
 import {
+  buildBreadcrumbJsonLd,
   buildCanonicalUrl,
   buildFaqJsonLd,
   buildLocalBusinessJsonLd,
@@ -114,6 +115,15 @@ export default async function LocationPage({ params }: PageParams) {
     canonicalUrl: canonical,
   });
   const faqJsonLd = buildFaqJsonLd(faqs);
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd({
+    settings,
+    location,
+    canonicalUrl: canonical,
+  });
+
+  const whatHappensNextParagraphs = location.whatTypicallyHappensNext
+    ? location.whatTypicallyHappensNext.split(/\n\n+/).filter(Boolean)
+    : [];
 
   const directionsQuery = encodeURIComponent(
     [location.streetAddress, location.city, location.state, location.zip].filter(Boolean).join(", "),
@@ -128,6 +138,7 @@ export default async function LocationPage({ params }: PageParams) {
     <div className="space-y-10">
       <JsonLd data={localBusinessJsonLd} id="local-business-schema" />
       <JsonLd data={faqJsonLd} id="faq-schema" />
+      <JsonLd data={breadcrumbJsonLd} id="breadcrumb-schema" />
 
       {!location.published && (
         <div className="surface border-amber-200 bg-amber-50 text-sm font-semibold text-amber-800">
@@ -288,6 +299,19 @@ export default async function LocationPage({ params }: PageParams) {
           ))}
         </div>
       </section>
+
+      {whatHappensNextParagraphs.length > 0 && (
+        <section className="panel space-y-3">
+          <h3 className="text-2xl font-semibold text-slate-900">
+            What typically happens next in {location.city}
+          </h3>
+          <div className="space-y-3 text-sm leading-6 text-slate-700">
+            {whatHappensNextParagraphs.map((para, idx) => (
+              <p key={idx}>{para}</p>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="panel grid gap-6 lg:grid-cols-[1.4fr,1fr]">
         <div className="space-y-3">

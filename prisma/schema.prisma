@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -40,6 +40,7 @@ model Location {
   shortIntro              String
   longIntro               String
   mainBody                String
+  whatTypicallyHappensNext String?
   servicesIntro           String?
   neighborhoodsOrAreas    String?
   localLandmarks          String?
