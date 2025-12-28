@@ -54,7 +54,7 @@ LOCALIZATION RULES:
 - Use phrasing consistent with how people in that region speak
 - Avoid invented data
 - You may say things like: "Many restaurants in {City} find that..." or "Operators often don't realize that..."
-- You may NOT invent: Court outcomes, success rates, official endorsements, specific inspection frequencies
+- You may NOT invent: Success rates, official endorsements, specific inspection frequencies, or fabricated business outcomes
 
 TRUTHFULNESS RULES (CRITICAL):
 - Do NOT invent facts (landmarks, awards, partnerships, regulations, inspection frequency, statistics, crew size, years in business).

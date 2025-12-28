@@ -161,9 +161,9 @@ const locationsData = [
     shortIntro:
       "Desert dust and monsoon humidity make Phoenix hoods work overtime. We keep exhaust systems clean, balanced, and ready for county inspections.",
     longIntro:
-      "Grease mixed with dust can choke rooftop fans and stain nearby walls. Our Phoenix team degreases fans, clears weep holes, and installs grease containment to protect stucco and parapet walls. We’re familiar with Maricopa County health checks and provide documentation that satisfies inspectors and insurance carriers.",
+      "Grease mixed with dust can choke rooftop fans and stain nearby walls. Our Phoenix team degreases fans, clears weep holes, and installs grease containment to protect stucco and parapet walls. We're familiar with Maricopa County health checks and provide documentation that satisfies inspectors and insurance requirements.",
     mainBody:
-      "Phoenix kitchens battle heat, desert dust, and monsoon humidity. Grease combines with dust to cake onto fan blades and parapet walls, while high summer temperatures stress belts and bearings. Shield Hood Services degreases hood plenums, ducts, and rooftop fans, and we install containment to keep grease off stucco and roof membranes. \n\nMaricopa County inspectors want to see clean access panels, documented rooftop work, and current stickers that match NFPA 96 cadences. We set schedules monthly or quarterly depending on volume, and we provide after-service photo reports you can email to landlords or insurers. \n\nFor Scottsdale resorts, downtown Phoenix towers, and Tempe campus kitchens, we plan after-close arrivals, use quiet equipment, and leave floors and patios clean. Monsoon storms can push debris into fan housings; we clear weep holes and verify fan vibration so exhaust stays balanced during peak heat. Each visit includes notes on filters, belts, and any access issues so you can stay ahead of inspections.",
+      "Phoenix kitchens battle heat, desert dust, and monsoon humidity. Grease combines with dust to cake onto fan blades and parapet walls, while high summer temperatures stress belts and bearings. Shield Hood Services degreases hood plenums, ducts, and rooftop fans, and we install containment to keep grease off stucco and roof membranes. \n\nMaricopa County inspectors want to see clean access panels, documented rooftop work, and current stickers that match NFPA 96 cadences. We set schedules monthly or quarterly depending on volume, and we provide after-service photo reports you can share with property managers or insurance providers. \n\nFor Scottsdale resorts, downtown Phoenix towers, and Tempe campus kitchens, we plan after-close arrivals, use quiet equipment, and leave floors and patios clean. Monsoon storms can push debris into fan housings; we clear weep holes and verify fan vibration so exhaust stays balanced during peak heat. Each visit includes notes on filters, belts, and any access issues so you can stay ahead of inspections.",
     servicesIntro:
       "From downtown high-rises to Scottsdale resorts and Tempe campus kitchens, we deliver compliant cleanings that survive long summers and monsoon surges.",
     neighborhoodsOrAreas:
@@ -189,7 +189,7 @@ const locationsData = [
       {
         name: "S. Lee",
         role: "Owner, campus eatery",
-        quote: "Great scheduling around finals week and fast photo documentation for our landlord.",
+        quote: "Great scheduling around finals week and fast photo documentation for our property manager.",
         area: "Tempe",
       },
     ],
