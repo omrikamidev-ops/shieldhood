@@ -9,7 +9,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getLocationsForSitemap(),
   ]);
 
-  const base = stripTrailingSlash(settings.baseDomain || "https://shieldhoodservice.com");
+  const base = stripTrailingSlash(settings.baseDomain || "https://hoodscleaning.net");
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: `${base}/`, changeFrequency: "weekly", priority: 0.8 },

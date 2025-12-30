@@ -5,7 +5,7 @@ const stripTrailingSlash = (value?: string | null) => (value ?? "").replace(/\/+
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
   const settings = await getGlobalSettings();
-  const base = stripTrailingSlash(settings.baseDomain || "https://shieldhoodservice.com");
+  const base = stripTrailingSlash(settings.baseDomain || "https://hoodscleaning.net");
 
   return {
     rules: {

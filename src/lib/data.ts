@@ -21,7 +21,7 @@ export type LocationWithServices = LocationWithFaq & {
 const defaultSettings = {
   businessName: "Shield Hood Services",
   primaryPhone: "(844) 555-0100",
-  baseDomain: "https://shieldhoodservice.com",
+  baseDomain: "https://hoodscleaning.net",
 };
 
 export const getGlobalSettings = async (): Promise<SettingsWithFaq> => {

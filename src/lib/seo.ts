@@ -94,7 +94,7 @@ export const buildBreadcrumbJsonLd = ({
   location: Pick<Location, "city" | "state" | "slug">;
   canonicalUrl: string;
 }) => {
-  const base = stripTrailingSlash(settings.baseDomain || "https://shieldhoodservice.com");
+  const base = stripTrailingSlash(settings.baseDomain || "https://hoodscleaning.net");
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

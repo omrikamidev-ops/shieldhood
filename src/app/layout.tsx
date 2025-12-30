@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   },
   description:
     "Local SEO-ready service pages for Shield Hood Services with fast, mobile-first layouts and schema markup.",
-  metadataBase: new URL("https://shieldhoodservice.com"),
+  metadataBase: new URL("https://hoodscleaning.net"),
 };
 
 export default async function RootLayout({

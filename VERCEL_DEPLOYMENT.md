@@ -17,7 +17,7 @@ Add these in your Vercel project settings (Settings → Environment Variables):
 
 ### Optional:
 - **`NEXT_PUBLIC_BASE_URL`** - Your production domain
-  - Example: `https://shieldhoodservice.com`
+  - Example: `https://hoodscleaning.net`
   - Used for canonical URLs
 
 ## Setup Steps

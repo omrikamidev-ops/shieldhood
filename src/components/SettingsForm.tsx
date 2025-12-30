@@ -79,7 +79,7 @@ export function SettingsForm({ initialData }: SettingsFormProps) {
           required
           value={formState.baseDomain}
           onChange={(value) => handleChange("baseDomain", value)}
-          placeholder="https://shieldhoodservice.com"
+          placeholder="https://hoodscleaning.net"
         />
       </div>
 
