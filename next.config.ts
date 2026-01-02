@@ -1,10 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  // Ensure middleware runs in Edge Runtime
+  // Force Edge Runtime for middleware
   experimental: {
-    // This ensures middleware uses Edge Runtime
+    serverComponentsExternalPackages: [],
   },
 };
 

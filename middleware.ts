@@ -1,20 +1,29 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Minimal base64 decode using Web API (Edge Runtime compatible)
+// Pure JavaScript base64 decode - no dependencies, Edge Runtime safe
 function decodeBase64(str: string): string {
   if (!str) return "";
-  try {
-    // Use TextDecoder for Edge Runtime compatibility
-    const binary = atob(str.replace(/[^A-Za-z0-9+/=]/g, ""));
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-      bytes[i] = binary.charCodeAt(i);
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+  let output = "";
+  let i = 0;
+  str = str.replace(/[^A-Za-z0-9+/=]/g, "");
+  if (!str) return "";
+  while (i < str.length) {
+    const enc1 = chars.indexOf(str.charAt(i++));
+    const enc2 = i < str.length ? chars.indexOf(str.charAt(i++)) : 64;
+    const enc3 = i < str.length ? chars.indexOf(str.charAt(i++)) : 64;
+    const enc4 = i < str.length ? chars.indexOf(str.charAt(i++)) : 64;
+    if (enc1 === -1 || enc2 === -1) break;
+    output += String.fromCharCode((enc1 << 2) | (enc2 >> 4));
+    if (enc3 !== 64 && enc3 !== -1) {
+      output += String.fromCharCode(((enc2 & 15) << 4) | (enc3 >> 2));
     }
-    return new TextDecoder().decode(bytes);
-  } catch {
-    return "";
+    if (enc4 !== 64 && enc4 !== -1) {
+      output += String.fromCharCode(((enc3 & 3) << 6) | enc4);
+    }
   }
+  return output;
 }
 
 export function middleware(request: NextRequest) {
