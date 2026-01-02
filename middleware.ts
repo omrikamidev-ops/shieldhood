@@ -1,6 +1,9 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+// Explicitly mark as Edge Runtime
+export const runtime = "edge";
+
 // Pure JavaScript base64 decode - works in Edge Runtime
 function base64Decode(str: string): string {
   if (!str) return "";
