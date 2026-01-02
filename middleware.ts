@@ -89,4 +89,6 @@ export const config = {
     "/api/revalidate",
     "/api/revalidate/:path*",
   ],
+  // Use Node.js runtime as workaround for __dirname bundling issue
+  runtime: "nodejs",
 };
