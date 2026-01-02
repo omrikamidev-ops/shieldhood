@@ -3,6 +3,16 @@ import { NextResponse } from "next/server";
 
 const protectedPaths = ["/admin", "/api/locations", "/api/settings", "/api/revalidate"];
 
+// Edge-compatible base64 decode
+function base64Decode(str: string): string {
+  if (typeof atob !== "undefined") {
+    // Browser/Edge Runtime
+    return atob(str);
+  }
+  // Node.js fallback (shouldn't be needed in Edge Runtime)
+  return Buffer.from(str, "base64").toString();
+}
+
 export function middleware(request: NextRequest) {
   try {
     const { pathname } = request.nextUrl;
@@ -12,7 +22,6 @@ export function middleware(request: NextRequest) {
 
     const adminPassword = process.env.ADMIN_PASSWORD;
     if (!adminPassword) {
-      console.error("ADMIN_PASSWORD environment variable is not set");
       return new NextResponse("Admin password not configured. Please set ADMIN_PASSWORD in Vercel environment variables.", { 
         status: 500,
         headers: { "Content-Type": "text/plain" },
@@ -22,14 +31,15 @@ export function middleware(request: NextRequest) {
     const authHeader = request.headers.get("authorization");
     if (authHeader?.startsWith("Basic ")) {
       try {
-        const credentials = Buffer.from(authHeader.split(" ")[1], "base64").toString();
+        const base64Credentials = authHeader.split(" ")[1];
+        const credentials = base64Decode(base64Credentials);
         const [, password] = credentials.split(":");
 
         if (password === adminPassword) {
           return NextResponse.next();
         }
       } catch (error) {
-        console.error("Failed to parse Basic Auth credentials:", error);
+        // Invalid credentials format, continue to 401
       }
     }
 
@@ -38,11 +48,15 @@ export function middleware(request: NextRequest) {
       headers: { "WWW-Authenticate": 'Basic realm="Admin Area"' },
     });
   } catch (error) {
-    console.error("Middleware error:", error);
     return new NextResponse("Internal server error", { status: 500 });
   }
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/locations/:path*", "/api/settings/:path*", "/api/revalidate"],
+  matcher: [
+    "/admin/:path*",
+    "/api/locations/:path*",
+    "/api/settings/:path*",
+    "/api/revalidate/:path*",
+  ],
 };
