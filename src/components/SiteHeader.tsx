@@ -13,7 +13,7 @@ const navItems = [
 ];
 
 export function SiteHeader({ settings }: Props) {
-  const phone = settings.primaryPhone || "(844) 555-0100";
+  const phone = settings.primaryPhone || "818-518-8161";
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">

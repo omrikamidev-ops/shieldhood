@@ -6,7 +6,7 @@ type Props = {
 };
 
 export function SiteFooter({ settings }: Props) {
-  const phone = settings.primaryPhone || "(844) 555-0100";
+  const phone = settings.primaryPhone || "818-518-8161";
   const addressParts = [
     settings.defaultStreetAddress,
     settings.defaultCity,

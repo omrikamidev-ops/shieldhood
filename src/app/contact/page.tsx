@@ -8,7 +8,7 @@ export const metadata = {
 
 export default async function ContactPage() {
   const settings = await getGlobalSettings();
-  const phone = settings.primaryPhone || "(844) 555-0100";
+  const phone = settings.primaryPhone || "818-518-8161";
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.3fr,1fr]">

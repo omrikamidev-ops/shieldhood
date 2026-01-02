@@ -20,7 +20,7 @@ export type LocationWithServices = LocationWithFaq & {
 
 const defaultSettings = {
   businessName: "Shield Hood Services",
-  primaryPhone: "(844) 555-0100",
+  primaryPhone: "818-518-8161",
   baseDomain: "https://hoodscleaning.net",
 };
 

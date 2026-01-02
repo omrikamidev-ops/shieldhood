@@ -28,7 +28,7 @@ export default async function Home() {
                 href={`tel:${settings.primaryPhone?.replace(/[^0-9+]/g, "") || ""}`}
                 className="pill solid bg-sky-600 px-5 py-3 text-[11px]"
               >
-                Call {settings.primaryPhone || "(844) 555-0100"}
+                Call {settings.primaryPhone || "818-518-8161"}
               </a>
               <Link
                 href="/contact"

@@ -205,8 +205,8 @@ async function main() {
     create: {
       id: 1,
       businessName: "Shield Hood Services",
-      primaryPhone: "(844) 555-0100",
-      primaryEmail: "hello@hoodscleaning.net",
+      primaryPhone: "818-518-8161",
+      primaryEmail: "redeagleservicing@gmail.com",
       baseDomain: "https://hoodscleaning.net",
       defaultStreetAddress: "123 Service Lane",
       defaultCity: "Los Angeles",
