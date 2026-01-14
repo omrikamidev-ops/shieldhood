@@ -2,6 +2,7 @@
  * Main generation pipeline for Local SEO pages
  */
 
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { generateLocalPageContent, PROMPT_VERSION } from './openai';
 import { validateContent } from './validation';
@@ -106,10 +107,10 @@ export async function generateLocalPageDraft(request: GenerateDraftRequest) {
       title: content.title,
       metaDescription: content.metaDescription,
       h1: content.h1,
-      contentJson: content as unknown as Record<string, unknown>,
+      contentJson: content as unknown as Prisma.InputJsonValue,
       renderedHtml,
-      faqJson: content.locationFAQ as unknown as Record<string, unknown>,
-      internalLinksJson: internalLinks as unknown as Record<string, unknown>,
+      faqJson: content.locationFAQ as unknown as Prisma.InputJsonValue,
+      internalLinksJson: internalLinks as unknown as Prisma.InputJsonValue,
       uniquenessScore: uniquenessScore,
       safetyFlags: safetyFlags as string[],
       status: 'draft',
