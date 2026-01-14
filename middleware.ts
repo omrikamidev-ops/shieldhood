@@ -84,6 +84,8 @@ export const config = {
     "/admin/:path*",
     "/api/locations",
     "/api/locations/:path*",
+    "/api/local-pages",
+    "/api/local-pages/:path*",
     "/api/settings",
     "/api/settings/:path*",
     "/api/revalidate",

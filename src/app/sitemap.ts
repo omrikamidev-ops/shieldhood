@@ -1,12 +1,18 @@
 import type { MetadataRoute } from "next";
 import { getGlobalSettings, getLocationsForSitemap } from "@/lib/data";
+import { prisma } from "@/lib/prisma";
+import { PRIMARY_KEYWORDS } from "@/lib/localPagesConfig";
 
 const stripTrailingSlash = (value?: string | null) => (value ?? "").replace(/\/+$/, "");
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [settings, locations] = await Promise.all([
+  const [settings, locations, localPages] = await Promise.all([
     getGlobalSettings(),
     getLocationsForSitemap(),
+    prisma.localPage.findMany({
+      where: { status: 'published' },
+      select: { slug: true, updatedAt: true },
+    }),
   ]);
 
   const base = stripTrailingSlash(settings.baseDomain || "https://hoodscleaning.net");
@@ -25,5 +31,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: loc.updatedAt,
   }));
 
-  return [...staticPages, ...locationPages];
+  // Locations hubs for each primary keyword
+  const locationsHubs: MetadataRoute.Sitemap = PRIMARY_KEYWORDS.map((keyword) => ({
+    url: `${base}/${keyword.slug}/locations/`,
+    changeFrequency: "weekly",
+    priority: 0.7,
+  }));
+
+  // Local SEO pages
+  const localSeoPages: MetadataRoute.Sitemap = localPages.map((page) => ({
+    url: `${base}${page.slug}`,
+    changeFrequency: "weekly",
+    priority: 0.7,
+    lastModified: page.updatedAt,
+  }));
+
+  return [...staticPages, ...locationPages, ...locationsHubs, ...localSeoPages];
 }

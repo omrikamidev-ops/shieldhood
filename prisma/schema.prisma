@@ -105,3 +105,64 @@ model AIContentLog {
 
   location Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
 }
+
+// Local SEO Pages System
+model LocalPage {
+  id                String    @id @default(uuid())
+  primaryKeyword    String    // e.g., "hood-cleaning"
+  primaryKeywordSlug String   // e.g., "hood-cleaning"
+  city              String
+  county            String?
+  state             String    @default("CA")
+  zip               String?   // For ZIP-based pages
+  slug              String    @unique
+  title             String
+  metaDescription   String
+  h1                String
+  contentJson       Json      // Full content structure
+  renderedHtml      String    @db.Text
+  faqJson           Json?     // Array of {question, answer}
+  schemaJsonld      Json?     // JSON-LD structured data
+  internalLinksJson Json?     // Array of internal links
+  uniquenessScore   Decimal?  @db.Decimal(5, 4) // 0.0000 to 1.0000
+  safetyFlags       String[]  // Array of flag strings
+  status            String    @default("draft") // "draft" | "published"
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  generationLogs    LocalPageGenerationLog[]
+
+  @@index([slug])
+  @@index([status])
+  @@index([primaryKeywordSlug, status])
+  @@index([city, state])
+}
+
+model LocalPageGenerationLog {
+  id                String    @id @default(uuid())
+  localPageId       String
+  slug              String
+  promptVersion     String
+  status            String    // "success" | "failed" | "flagged"
+  similarityScore  Decimal?  @db.Decimal(5, 4)
+  safetyFlags       String[]
+  notes             String?   @db.Text
+  createdAt         DateTime  @default(now())
+
+  localPage         LocalPage @relation(fields: [localPageId], references: [id], onDelete: Cascade)
+
+  @@index([slug])
+  @@index([localPageId])
+}
+
+model LocalCityContext {
+  id              String    @id @default(uuid())
+  city            String
+  state           String    @default("CA")
+  zip             String?   @unique
+  localNotes      String?   @db.Text // Each line becomes a paragraph
+  localResources  Json?     // Array of resource objects
+
+  @@unique([city, state])
+  @@index([zip])
+}
