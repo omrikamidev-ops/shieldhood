@@ -107,12 +107,17 @@ Writing rules:
 - Content must be written for humans first. SEO is secondary to usefulness.
 `;
 
+type GenerateOptions = {
+  strict?: boolean;
+};
+
 export async function generateLocalPageContent(
   city: string,
   state: string,
   county?: string,
   zip?: string,
   neighborhoods?: string,
+  options: GenerateOptions = {},
 ): Promise<LocalPageContent> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
@@ -122,10 +127,21 @@ export async function generateLocalPageContent(
   const locationText = zip ? `ZIP code ${zip}` : `${city}, ${state}`;
   const countyText = county ? `, ${county} County` : '';
 
+  const strictNotes = options.strict
+    ? `
+STRICT OUTPUT REQUIREMENTS:
+- Main body must be 1000-1200 words (non-FAQ).
+- Include at least 6 city/state mentions.
+- Provide at least 5 FAQs.
+- Ensure each section has 2+ paragraphs.
+`
+    : "";
+
   const userPrompt = `
 Generate a Local SEO page for Shield Hood Services in ${locationText}${countyText}.
 
 ${neighborhoods ? `Neighborhoods/areas to mention: ${neighborhoods}` : ''}
+${strictNotes}
 
 Return strictly valid JSON object with the fields described in the system prompt.
 `;
@@ -138,7 +154,7 @@ Return strictly valid JSON object with the fields described in the system prompt
     },
     body: JSON.stringify({
       model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
-      temperature: 0.8,
+      temperature: options.strict ? 0.6 : 0.8,
       top_p: 0.9,
       messages: [
         {

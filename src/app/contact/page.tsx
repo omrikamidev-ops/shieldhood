@@ -1,5 +1,6 @@
 import { LeadForm } from "@/components/LeadForm";
 import { getGlobalSettings } from "@/lib/data";
+import { formatPhoneDisplay } from "@/lib/phone";
 
 export const metadata = {
   title: "Contact Shield Hood Services",
@@ -9,6 +10,7 @@ export const metadata = {
 export default async function ContactPage() {
   const settings = await getGlobalSettings();
   const phone = settings.primaryPhone || "818-518-8161";
+  const phoneDisplay = formatPhoneDisplay(phone);
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.3fr,1fr]">
@@ -32,7 +34,7 @@ export default async function ContactPage() {
               .filter(Boolean)
               .join(", ")}
           </div>
-          <div className="font-semibold text-slate-900">{phone}</div>
+          <div className="font-semibold text-slate-900">{phoneDisplay}</div>
           {settings.primaryEmail && <div>{settings.primaryEmail}</div>}
         </div>
         <div className="surface px-4 py-3 text-sm text-slate-700">

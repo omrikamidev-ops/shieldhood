@@ -57,17 +57,29 @@ export async function generateLocalPageDraft(request: GenerateDraftRequest) {
       ? await prisma.localCityContext.findUnique({ where: { zip } })
       : null;
 
-  // Generate content
-  const content = await generateLocalPageContent(
-    city || '',
-    state,
-    county,
-    zip,
-    cityContext?.localNotes || undefined,
-  );
+  // Generate content (retry once if quality flags are triggered)
+  const retryFlags = new Set<SafetyFlag>([
+    'low_word_count',
+    'insufficient_faq',
+    'insufficient_sections',
+    'low_city_mentions',
+  ]);
+  let content: LocalPageContent;
+  let safetyFlags: SafetyFlag[] = [];
+  let attempt = 0;
 
-  // Validate content
-  const safetyFlags = validateContent(content, city || zip || '', state);
+  do {
+    attempt += 1;
+    content = await generateLocalPageContent(
+      city || '',
+      state,
+      county,
+      zip,
+      cityContext?.localNotes || undefined,
+      { strict: attempt > 1 },
+    );
+    safetyFlags = validateContent(content, city || zip || '', state);
+  } while (attempt < 2 && safetyFlags.some((flag) => retryFlags.has(flag)));
 
   // Calculate uniqueness
   const existingPages = await prisma.localPage.findMany({

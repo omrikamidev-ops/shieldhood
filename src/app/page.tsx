@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getGlobalSettings, getPublishedLocations, getServices } from "@/lib/data";
+import { formatPhoneDisplay, formatPhoneHref } from "@/lib/phone";
 
 export default async function Home() {
   const [settings, locations, services] = await Promise.all([
@@ -9,6 +10,8 @@ export default async function Home() {
   ]);
 
   const featuredLocations = locations.slice(0, 3);
+  const phoneDisplay = formatPhoneDisplay(settings.primaryPhone || "818-518-8161");
+  const phoneHref = formatPhoneHref(settings.primaryPhone || "818-518-8161");
 
   return (
     <div className="space-y-12">
@@ -25,10 +28,10 @@ export default async function Home() {
             </p>
             <div className="flex flex-wrap gap-3">
               <a
-                href={`tel:${settings.primaryPhone?.replace(/[^0-9+]/g, "") || ""}`}
+                href={phoneHref}
                 className="pill solid bg-sky-600 px-5 py-3 text-[11px]"
               >
-                Call {settings.primaryPhone || "818-518-8161"}
+                Call {phoneDisplay}
               </a>
               <Link
                 href="/contact"
@@ -90,7 +93,7 @@ export default async function Home() {
             <div>
               {[settings.defaultCity, settings.defaultState, settings.defaultZip].filter(Boolean).join(", ")}
             </div>
-            <div className="font-semibold text-slate-900">{settings.primaryPhone}</div>
+            <div className="font-semibold text-slate-900">{phoneDisplay}</div>
             {settings.primaryEmail && <div>{settings.primaryEmail}</div>}
           </div>
         </div>

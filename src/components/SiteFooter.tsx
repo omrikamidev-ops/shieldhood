@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SettingsWithFaq } from "@/lib/data";
+import { formatPhoneDisplay, formatPhoneHref } from "@/lib/phone";
 
 type Props = {
   settings: SettingsWithFaq;
@@ -7,6 +8,8 @@ type Props = {
 
 export function SiteFooter({ settings }: Props) {
   const phone = settings.primaryPhone || "818-518-8161";
+  const phoneDisplay = formatPhoneDisplay(phone);
+  const phoneHref = formatPhoneHref(phone);
   const addressParts = [
     settings.defaultStreetAddress,
     settings.defaultCity,
@@ -37,8 +40,8 @@ export function SiteFooter({ settings }: Props) {
           <Link className="hover:text-sky-700" href="/contact">
             Contact
           </Link>
-          <a className="text-slate-900 hover:text-sky-700" href={`tel:${phone.replace(/[^0-9+]/g, "")}`}>
-            {phone}
+          <a className="text-slate-900 hover:text-sky-700" href={phoneHref}>
+            {phoneDisplay}
           </a>
           {settings.primaryEmail && (
             <a className="text-slate-900 hover:text-sky-700" href={`mailto:${settings.primaryEmail}`}>

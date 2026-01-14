@@ -22,6 +22,7 @@ import {
   buildRobots,
   getLocationPhone,
 } from "@/lib/seo";
+import { formatPhoneDisplay, formatPhoneHref } from "@/lib/phone";
 
 export const revalidate = 900;
 export const dynamicParams = true;
@@ -83,6 +84,8 @@ export default async function LocationPage({ params }: PageParams) {
   }
 
   const phone = getLocationPhone(location, settings);
+  const phoneDisplay = formatPhoneDisplay(phone);
+  const phoneHref = formatPhoneHref(phone);
   const faqs = mergeFaqs(settings.faqItems, location.faqItems);
   const canonical = buildCanonicalUrl(settings, location.slug);
   const nearby = await getNearbyLocations(location.slug);
@@ -159,11 +162,8 @@ export default async function LocationPage({ params }: PageParams) {
               `${settings.businessName} cleans hoods, ducts, and rooftop fans for restaurants across ${location.city}.`}
           </p>
           <div className="flex flex-wrap gap-3">
-            <a
-              href={`tel:${phone.replace(/[^0-9+]/g, "")}`}
-              className="pill solid px-5 py-3 text-[11px]"
-            >
-              Call {phone}
+            <a href={phoneHref} className="pill solid px-5 py-3 text-[11px]">
+              Call {phoneDisplay}
             </a>
             <a
               href="#request-service"
@@ -184,7 +184,7 @@ export default async function LocationPage({ params }: PageParams) {
             <div>
               {[location.city, location.state, location.zip].filter(Boolean).join(", ")}
             </div>
-            <div className="font-semibold text-slate-900">{phone}</div>
+            <div className="font-semibold text-slate-900">{phoneDisplay}</div>
             {settings.primaryEmail && <div>{settings.primaryEmail}</div>}
             <div className="pt-2">
               <a

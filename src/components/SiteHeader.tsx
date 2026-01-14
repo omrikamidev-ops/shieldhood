@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SettingsWithFaq } from "@/lib/data";
+import { formatPhoneDisplay, formatPhoneHref } from "@/lib/phone";
 
 type Props = {
   settings: SettingsWithFaq;
@@ -14,6 +15,8 @@ const navItems = [
 
 export function SiteHeader({ settings }: Props) {
   const phone = settings.primaryPhone || "818-518-8161";
+  const phoneDisplay = formatPhoneDisplay(phone);
+  const phoneHref = formatPhoneHref(phone);
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
@@ -51,10 +54,10 @@ export function SiteHeader({ settings }: Props) {
         <div className="hidden items-center gap-3 sm:flex">
           <div className="text-right text-[11px] uppercase tracking-[0.14em] text-slate-500">
             Call
-            <div className="text-sm font-semibold text-slate-900">{phone}</div>
+            <div className="text-sm font-semibold text-slate-900">{phoneDisplay}</div>
           </div>
           <a
-            href={`tel:${phone.replace(/[^0-9+]/g, "")}`}
+            href={phoneHref}
             className="rounded-full bg-sky-600 px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-white transition hover:bg-sky-700"
           >
             Call
