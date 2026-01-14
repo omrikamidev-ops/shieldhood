@@ -33,7 +33,9 @@ export async function generateLocalPageDraft(request: GenerateDraftRequest) {
     providedSlug ||
     (zip
       ? `/${primaryKeywordSlug}-${zip}`
-      : `/${primaryKeywordSlug}/${city.toLowerCase().replace(/\s+/g, '-')}-${state.toLowerCase()}`);
+      : city
+        ? `/${primaryKeywordSlug}/${city.toLowerCase().replace(/\s+/g, '-')}-${state.toLowerCase()}`
+        : '');
 
   // Check if slug already exists
   const existing = await prisma.localPage.findUnique({ where: { slug } });
