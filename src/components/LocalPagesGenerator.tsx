@@ -609,12 +609,12 @@ export function LocalPagesGenerator() {
                       {page.uniquenessScore !== null && (
                         <span
                           className={`rounded-full px-2 py-1 text-xs font-semibold ${
-                            page.uniquenessScore >= 0.9
+                            Number(page.uniquenessScore) >= 0.9
                               ? 'bg-green-100 text-green-800'
                               : 'bg-red-100 text-red-800'
                           }`}
                         >
-                          {Math.round(page.uniquenessScore * 100)}%
+                          {Math.round(Number(page.uniquenessScore) * 100)}%
                         </span>
                       )}
                     </td>

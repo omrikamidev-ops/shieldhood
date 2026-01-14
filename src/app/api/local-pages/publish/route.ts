@@ -34,14 +34,17 @@ export async function POST(request: Request) {
           { status: 400 },
         );
       }
-      if (localPage.uniquenessScore !== null && localPage.uniquenessScore < 0.9) {
-        return NextResponse.json(
-          {
-            error: 'Uniqueness score below threshold',
-            uniquenessScore: localPage.uniquenessScore,
-          },
-          { status: 400 },
-        );
+      if (localPage.uniquenessScore !== null) {
+        const uniquenessValue = Number(localPage.uniquenessScore);
+        if (uniquenessValue < 0.9) {
+          return NextResponse.json(
+            {
+              error: 'Uniqueness score below threshold',
+              uniquenessScore: uniquenessValue,
+            },
+            { status: 400 },
+          );
+        }
       }
     }
 
