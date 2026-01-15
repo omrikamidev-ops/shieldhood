@@ -44,12 +44,6 @@ export function SiteHeader({ settings }: Props) {
               {item.label}
             </Link>
           ))}
-          <Link
-            href="/admin"
-            className="rounded-full px-3 py-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-900"
-          >
-            Admin
-          </Link>
         </nav>
         <div className="hidden items-center gap-3 sm:flex">
           <div className="text-right text-[11px] uppercase tracking-[0.14em] text-slate-500">
@@ -69,12 +63,6 @@ export function SiteHeader({ settings }: Props) {
             className="rounded-full border border-slate-200 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-800"
           >
             Locations
-          </Link>
-          <Link
-            href="/admin"
-            className="rounded-full bg-slate-900 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-white"
-          >
-            Admin
           </Link>
         </div>
       </div>
