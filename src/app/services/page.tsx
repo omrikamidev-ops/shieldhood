@@ -16,8 +16,8 @@ export default async function ServicesPage() {
         <div className="pill bg-slate-900 text-white">Services</div>
         <h1 className="text-3xl font-semibold text-slate-900">Hood cleaning, simplified.</h1>
         <p className="text-sm text-slate-600">
-          {settings.globalServiceDescription ||
-            "We clean hoods, ducts, fans, filters, and polish stainless so cooks breathe easier and inspectors sign off faster."}
+          Hoods Cleaning provides commercial kitchen hood cleaning, exhaust fan degreasing, and full-system
+          documentation performed in accordance with NFPA-96 and local fire code requirements.
         </p>
         <div className="flex flex-wrap gap-3">
           <Link href="/contact" className="pill solid px-4 py-3 text-[11px]">
@@ -31,16 +31,28 @@ export default async function ServicesPage() {
 
       <section className="grid gap-4 sm:grid-cols-2">
         {services.map((service) => (
+          (() => {
+            const isFireCode = service.name === "Fire Code Compliance Inspections";
+            const title = isFireCode ? "Fire Code Inspection Readiness" : service.name;
+            const shortDescription = isFireCode
+              ? "Pre-inspection walk-throughs to help prepare your exhaust system for fire marshal review."
+              : service.shortDescription;
+            const longDescription = isFireCode
+              ? "Service documentation, system condition notes, and service stickers provided to support compliance with local AHJ requirements."
+              : service.longDescription;
+            return (
           <article key={service.slug} className="surface p-5">
             {service.isPrimary && (
               <span className="pill bg-slate-100 text-slate-800">Core</span>
             )}
-            <h2 className="mt-2 text-lg font-semibold text-slate-900">{service.name}</h2>
-            <p className="text-sm text-slate-600">{service.shortDescription}</p>
-            {service.longDescription && (
-              <p className="mt-2 text-sm text-slate-600">{service.longDescription}</p>
+            <h2 className="mt-2 text-lg font-semibold text-slate-900">{title}</h2>
+            <p className="text-sm text-slate-600">{shortDescription}</p>
+            {longDescription && (
+              <p className="mt-2 text-sm text-slate-600">{longDescription}</p>
             )}
           </article>
+            );
+          })()
         ))}
       </section>
     </div>
