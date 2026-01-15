@@ -25,7 +25,7 @@ export default async function ContactPage() {
         </div>
       </section>
       <aside className="panel space-y-4">
-        <h2 className="text-lg font-semibold text-slate-900">NAP + coverage</h2>
+        <h2 className="text-lg font-semibold text-slate-900">Business details</h2>
         <div className="surface px-4 py-3 text-sm text-slate-800">
           <div className="font-semibold">{settings.businessName}</div>
           {settings.defaultStreetAddress && <div>{settings.defaultStreetAddress}</div>}

@@ -84,7 +84,7 @@ export default async function Home() {
         </div>
         <div className="surface p-5">
           <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-slate-500">
-            NAP consistency
+            Business details
           </h3>
           <div className="divider my-3" />
           <div className="space-y-1 text-sm text-slate-800">

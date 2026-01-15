@@ -175,7 +175,7 @@ export default async function LocationPage({ params }: PageParams) {
         </div>
         <div className="surface p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
-            NAP consistency
+            Business details
           </p>
           <div className="divider my-3" />
           <div className="space-y-1 text-sm text-slate-800">
