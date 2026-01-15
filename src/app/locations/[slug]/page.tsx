@@ -136,6 +136,20 @@ export default async function LocationPage({ params }: PageParams) {
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
         [location.city, location.state].filter(Boolean).join(", "),
       )}`;
+  const mapQuery = encodeURIComponent(
+    [location.streetAddress, location.city, location.state, location.zip].filter(Boolean).join(", "),
+  );
+  const fallbackMapSrc = mapQuery
+    ? `https://www.google.com/maps?q=${mapQuery}&output=embed`
+    : `https://www.google.com/maps?q=${encodeURIComponent(
+        [location.city, location.state].filter(Boolean).join(", "),
+      )}&output=embed`;
+  const mapSrc =
+    location.googleMapsEmbedUrl &&
+    (location.googleMapsEmbedUrl.includes("output=embed") ||
+      location.googleMapsEmbedUrl.includes("/maps/embed"))
+      ? location.googleMapsEmbedUrl
+      : fallbackMapSrc;
 
   return (
     <div className="space-y-10">
@@ -411,7 +425,7 @@ export default async function LocationPage({ params }: PageParams) {
         </div>
         <div className="overflow-hidden rounded-xl border border-slate-200">
           <iframe
-            src={location.googleMapsEmbedUrl}
+            src={mapSrc}
             className="h-[320px] w-full"
             loading="lazy"
             allowFullScreen
