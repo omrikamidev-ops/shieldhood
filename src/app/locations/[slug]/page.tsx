@@ -164,16 +164,18 @@ export default async function LocationPage({ params }: PageParams) {
             </a>
           </div>
         </div>
-        <div className="surface p-5">
+          <div className="surface p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
             Business details
           </p>
           <div className="divider my-3" />
           <div className="space-y-1 text-sm text-slate-800">
             <div className="font-semibold">{settings.businessName}</div>
-            {location.streetAddress && <div>{location.streetAddress}</div>}
+              {settings.defaultStreetAddress && <div>{settings.defaultStreetAddress}</div>}
             <div>
-              {[location.city, location.state, location.zip].filter(Boolean).join(", ")}
+                {[settings.defaultCity, settings.defaultState, settings.defaultZip]
+                  .filter(Boolean)
+                  .join(", ")}
             </div>
             <div className="font-semibold text-slate-900">{phoneDisplay}</div>
             {settings.primaryEmail && <div>{settings.primaryEmail}</div>}

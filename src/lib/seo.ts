@@ -7,7 +7,7 @@ const stripTrailingSlash = (value?: string | null) =>
 export const getLocationPhone = (
   location: Pick<Location, "phoneOverride">,
   settings: Pick<GlobalSettings, "primaryPhone">,
-) => location.phoneOverride || settings.primaryPhone;
+) => settings.primaryPhone;
 
 export const buildLocationTitle = (
   location: Pick<Location, "pageTitleOverride" | "city" | "state">,
