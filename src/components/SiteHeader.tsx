@@ -22,12 +22,15 @@ export function SiteHeader({ settings }: Props) {
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900 text-sm font-semibold text-white">
-            SH
+          <div
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-sm font-semibold text-white"
+            style={{ backgroundColor: "#0B1F33" }}
+          >
+            HC
           </div>
           <div className="leading-tight">
             <Link href="/" className="text-base font-semibold uppercase tracking-[0.08em] text-slate-900">
-              {settings.businessName}
+              Hoods Cleaning
             </Link>
             <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
               Commercial Hood Cleaning
