@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FAQAccordion } from "@/components/FAQAccordion";
-import { JsonLd } from "@/components/JsonLd";
 import { LeadForm } from "@/components/LeadForm";
 import {
   getGlobalSettings,
@@ -13,10 +12,7 @@ import {
 } from "@/lib/data";
 import { mergeFaqs } from "@/lib/faq";
 import {
-  buildBreadcrumbJsonLd,
   buildCanonicalUrl,
-  buildFaqJsonLd,
-  buildLocalBusinessJsonLd,
   buildLocationDescription,
   buildLocationTitle,
   buildRobots,
@@ -88,7 +84,7 @@ export default async function LocationPage({ params }: PageParams) {
   const phoneHref = formatPhoneHref(phone);
   const faqs = mergeFaqs(settings.faqItems, location.faqItems);
   const canonical = buildCanonicalUrl(settings, location.slug);
-  const nearby = await getNearbyLocations(location.slug);
+  const nearby = await getNearbyLocations(location.slug, location.state);
   const landmarks =
     location.localLandmarks?.split(",").map((item) => item.trim()).filter(Boolean) ?? [];
   const neighborhoods =
@@ -112,17 +108,6 @@ export default async function LocationPage({ params }: PageParams) {
     ? location.longIntro.split(/\n\n+/).filter(Boolean)
     : [];
 
-  const localBusinessJsonLd = buildLocalBusinessJsonLd({
-    location,
-    settings,
-    canonicalUrl: canonical,
-  });
-  const faqJsonLd = buildFaqJsonLd(faqs);
-  const breadcrumbJsonLd = buildBreadcrumbJsonLd({
-    settings,
-    location,
-    canonicalUrl: canonical,
-  });
 
   const whatHappensNextParagraphs = location.whatTypicallyHappensNext
     ? location.whatTypicallyHappensNext.split(/\n\n+/).filter(Boolean)
@@ -148,9 +133,6 @@ export default async function LocationPage({ params }: PageParams) {
 
   return (
     <div className="space-y-10">
-      <JsonLd data={localBusinessJsonLd} id="local-business-schema" />
-      <JsonLd data={faqJsonLd} id="faq-schema" />
-      <JsonLd data={breadcrumbJsonLd} id="breadcrumb-schema" />
 
       {!location.published && (
         <div className="surface border-amber-200 bg-amber-50 text-sm font-semibold text-amber-800">
@@ -164,7 +146,7 @@ export default async function LocationPage({ params }: PageParams) {
             {location.city}, {location.state}
           </div>
           <h1 className="text-3xl font-semibold text-slate-900">
-            {location.h1Override || `${settings.businessName} in ${location.city}, ${location.state}`}
+            {location.h1Override || `Hood Cleaning in ${location.city}, ${location.state}`}
           </h1>
           <p className="text-sm text-slate-600">
             {location.shortIntro ||

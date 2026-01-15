@@ -135,10 +135,14 @@ export const getLocationsForSitemap = async () => {
   }
 };
 
-export const getNearbyLocations = async (slug: string, limit = 2) => {
+export const getNearbyLocations = async (slug: string, state?: string, limit = 2) => {
   try {
     const all = await prisma.location.findMany({
-      where: { published: true, slug: { not: slug } },
+      where: {
+        published: true,
+        slug: { not: slug },
+        ...(state ? { state } : {}),
+      },
       select: { city: true, state: true, slug: true },
       orderBy: { updatedAt: "desc" },
     });
