@@ -5,7 +5,7 @@ import { formatPhoneDisplay, formatPhoneHref } from "@/lib/phone";
 export default async function Home() {
   const [settings, locations] = await Promise.all([getGlobalSettings(), getPublishedLocations()]);
 
-  const featuredLocations = locations.slice(0, 3);
+  const featuredLocations = locations.filter((loc) => loc.state === "CA").slice(0, 3);
   const phoneDisplay = formatPhoneDisplay(settings.primaryPhone || "818-518-8161");
   const phoneHref = formatPhoneHref(settings.primaryPhone || "818-518-8161");
 
@@ -47,7 +47,7 @@ export default async function Home() {
           </div>
           <div className="surface w-full max-w-sm p-5">
             <div className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
-              Service areas
+              Proudly serving all of Southern California
             </div>
             <div className="divider my-3" />
             <div className="space-y-3">
