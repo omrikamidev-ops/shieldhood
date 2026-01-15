@@ -14,7 +14,7 @@ export const buildLocationTitle = (
   settings: Pick<GlobalSettings, "businessName">,
 ) =>
   location.pageTitleOverride ||
-  `${settings.businessName} in ${location.city}, ${location.state} | Hood Cleaning & Fire Safety Experts`;
+  `${settings.businessName} in ${location.city}, ${location.state}`;
 
 export const buildLocationDescription = (
   location: Pick<
@@ -24,7 +24,7 @@ export const buildLocationDescription = (
   settings: Pick<GlobalSettings, "businessName" | "primaryPhone">,
 ) =>
   location.metaDescriptionOverride ||
-  `${settings.businessName} provides NFPA 96 compliant hood & kitchen exhaust cleaning in ${location.city}, ${location.state}. Photo reports & service stickers. Call ${
+  `${settings.businessName} provides commercial hood and exhaust cleaning in ${location.city}, ${location.state}. Photo documentation and service records included. Call ${
     location.phoneOverride || settings.primaryPhone
   }.`;
 

@@ -4,7 +4,7 @@ import { getGlobalSettings, getServices } from "@/lib/data";
 export const metadata = {
   title: "Hood Cleaning Services",
   description:
-    "Certified commercial hood cleaning, exhaust fan degreasing, and documentation built for inspections.",
+    "Commercial kitchen hood cleaning, exhaust fan degreasing, and full-system documentation for inspections.",
 };
 
 export default async function ServicesPage() {

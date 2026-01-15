@@ -144,12 +144,7 @@ export default async function LocationPage({ params }: PageParams) {
     : `https://www.google.com/maps?q=${encodeURIComponent(
         [location.city, location.state].filter(Boolean).join(", "),
       )}&output=embed`;
-  const mapSrc =
-    location.googleMapsEmbedUrl &&
-    (location.googleMapsEmbedUrl.includes("output=embed") ||
-      location.googleMapsEmbedUrl.includes("/maps/embed"))
-      ? location.googleMapsEmbedUrl
-      : fallbackMapSrc;
+  const mapSrc = fallbackMapSrc;
 
   return (
     <div className="space-y-10">

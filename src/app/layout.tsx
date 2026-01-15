@@ -6,11 +6,11 @@ import { getGlobalSettings } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: {
-    default: "Shield Hood Services | Commercial Hood Cleaning",
-    template: "%s | Shield Hood Services",
+    default: "Hoods Cleaning | Commercial Hood Cleaning",
+    template: "%s | Hoods Cleaning",
   },
   description:
-    "Local SEO-ready service pages for Shield Hood Services with fast, mobile-first layouts and schema markup.",
+    "Commercial kitchen hood and exhaust cleaning for restaurants, hotels, and food service facilities.",
   metadataBase: new URL("https://hoodscleaning.net"),
 };
 

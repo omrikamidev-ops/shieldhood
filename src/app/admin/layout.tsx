@@ -6,7 +6,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="panel">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-sm font-semibold text-slate-900">Local SEO Admin</div>
+            <div className="text-sm font-semibold text-slate-900">Service Pages Admin</div>
             <p className="text-xs text-slate-600">
               Protected by ADMIN_PASSWORD. Publish or edit locations and global settings.
             </p>

@@ -13,6 +13,11 @@ import { isValidPrimaryKeyword } from '@/lib/localPagesConfig';
 
 export async function generateLocalPageDraft(request: GenerateDraftRequest) {
   const { primaryKeywordSlug, city, zip, county, state, intent, slug: providedSlug } = request;
+  const keywordDisplay = primaryKeywordSlug
+    .split('-')
+    .map((word) => (word ? word[0].toUpperCase() + word.slice(1) : ''))
+    .join(' ')
+    .trim();
 
   // Validate primary keyword
   if (!isValidPrimaryKeyword(primaryKeywordSlug)) {
@@ -71,6 +76,7 @@ export async function generateLocalPageDraft(request: GenerateDraftRequest) {
   do {
     attempt += 1;
     content = await generateLocalPageContent(
+      keywordDisplay || primaryKeywordSlug,
       city || '',
       state,
       county,

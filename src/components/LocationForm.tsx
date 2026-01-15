@@ -296,7 +296,7 @@ export function LocationForm({ mode, initialData }: LocationFormProps) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label="SEO title override"
+          label="Title override"
           value={formState.pageTitleOverride}
           onChange={(value) => handleChange("pageTitleOverride", value)}
         />

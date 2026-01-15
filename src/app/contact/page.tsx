@@ -3,7 +3,7 @@ import { getGlobalSettings } from "@/lib/data";
 import { formatPhoneDisplay } from "@/lib/phone";
 
 export const metadata = {
-  title: "Contact Shield Hood Services",
+  title: "Contact Hoods Cleaning",
   description: "Request commercial hood cleaning, rooftop fan degreasing, and inspection documentation.",
 };
 
