@@ -34,9 +34,13 @@ export function LeadForm({ locationSlug, defaultCity, locationId }: LeadFormProp
     });
 
     if (response.ok) {
-      setStatus("success");
-      setMessage("Request received. We will reach out shortly.");
       event.currentTarget.reset();
+      setStatus("success");
+      setMessage("Thanks — your request was sent. We’ll reach out shortly.");
+      setTimeout(() => {
+        setStatus("idle");
+        setMessage("");
+      }, 6000);
     } else {
       const data = await response.json().catch(() => ({}));
       setStatus("error");
