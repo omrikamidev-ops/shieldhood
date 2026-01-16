@@ -12,6 +12,14 @@ export function LocalPagesGenerator() {
   const [activeTab, setActiveTab] = useState<Tab>('generate');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const buildLiveUrl = (slug: string) => {
+    if (!slug) return '';
+    const base =
+      typeof window !== 'undefined' && window.location?.origin
+        ? window.location.origin
+        : 'https://hoodscleaning.net';
+    return slug.startsWith('/') ? `${base}${slug}` : `${base}/${slug}`;
+  };
 
   // Generate Draft tab state
   const [primaryKeyword, setPrimaryKeyword] = useState('');
@@ -591,7 +599,18 @@ export function LocalPagesGenerator() {
                       <div className="font-semibold text-slate-900">
                         {page.city || page.zip || 'N/A'}
                       </div>
-                      <div className="text-xs text-slate-600">{page.slug}</div>
+                      {page.status === 'published' ? (
+                        <a
+                          href={buildLiveUrl(page.slug)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-sky-700 hover:underline"
+                        >
+                          {page.slug}
+                        </a>
+                      ) : (
+                        <div className="text-xs text-slate-600">{page.slug}</div>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-slate-700">{page.primaryKeywordSlug}</td>
                     <td className="px-4 py-3">
