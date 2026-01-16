@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getGlobalSettings, getLocationsForSitemap } from "@/lib/data";
+import { generateLocationSlug } from "@/lib/slug";
 import { prisma } from "@/lib/prisma";
 import { PRIMARY_KEYWORDS } from "@/lib/localPagesConfig";
 
@@ -25,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const locationPages: MetadataRoute.Sitemap = locations.map((loc) => ({
-    url: `${base}/locations/${loc.slug}`,
+    url: `${base}/${generateLocationSlug(loc.city, loc.state)}`,
     changeFrequency: "weekly",
     priority: 0.7,
     lastModified: loc.updatedAt,

@@ -88,10 +88,22 @@ export const getLocationBySlug = async (
   slug: string,
 ): Promise<LocationWithServices | null> => {
   try {
-    const location = await prisma.location.findUnique({
-      where: { slug },
-      include: { services: { include: { service: true } } },
-    });
+    const location =
+      (await prisma.location.findUnique({
+        where: { slug },
+        include: { services: { include: { service: true } } },
+      })) ||
+      (slug.startsWith("hood-cleaning-")
+        ? await prisma.location.findUnique({
+            where: { slug: `${slug.replace(/^hood-cleaning-/, "")}-hood-cleaning` },
+            include: { services: { include: { service: true } } },
+          })
+        : slug.endsWith("-hood-cleaning")
+          ? await prisma.location.findUnique({
+              where: { slug: `hood-cleaning-${slug.replace(/-hood-cleaning$/, "")}` },
+              include: { services: { include: { service: true } } },
+            })
+          : null);
 
     if (!location) return null;
 

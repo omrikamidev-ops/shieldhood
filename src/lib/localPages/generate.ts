@@ -40,7 +40,7 @@ export async function generateLocalPageDraft(request: GenerateDraftRequest) {
     (zip
       ? `/${primaryKeywordSlug}-${zip}`
       : city
-        ? `/${primaryKeywordSlug}/${city.toLowerCase().replace(/\s+/g, '-')}-${state.toLowerCase()}`
+        ? `/${primaryKeywordSlug}-${city.toLowerCase().replace(/\s+/g, '-')}-${state.toLowerCase()}`
         : '');
 
   if (!slug) {

@@ -63,7 +63,7 @@ export function LocalPagesGenerator() {
         setSlug(`/${primaryKeyword}-${zip}`);
       } else if (locationType === 'city' && city) {
         const citySlug = city.toLowerCase().replace(/\s+/g, '-');
-        setSlug(`/${primaryKeyword}/${citySlug}-ca`);
+        setSlug(`/${primaryKeyword}-${citySlug}-ca`);
       }
     }
   }, [primaryKeyword, locationType, city, zip, slugTouched]);

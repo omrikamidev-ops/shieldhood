@@ -29,7 +29,7 @@ export const buildLocationDescription = (
   }.`;
 
 export const buildCanonicalUrl = (settings: GlobalSettings, slug: string) =>
-  `${stripTrailingSlash(settings.baseDomain)}/locations/${slug}`;
+  `${stripTrailingSlash(settings.baseDomain)}/${slug}`;
 
 export const buildRobots = (published: boolean) =>
   published ? { index: true, follow: true } : { index: false, follow: false };

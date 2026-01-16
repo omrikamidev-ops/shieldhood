@@ -5,7 +5,7 @@ const slugify = (value: string) =>
     .replace(/(^-|-$)+/g, "");
 
 export const generateLocationSlug = (city: string, state?: string) => {
-  const base = [city, state, "hood cleaning"].filter(Boolean).join(" ");
+  const base = ["hood cleaning", city, state].filter(Boolean).join(" ");
   return slugify(base);
 };
 

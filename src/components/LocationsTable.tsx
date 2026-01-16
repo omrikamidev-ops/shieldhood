@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { generateLocationSlug } from "@/lib/slug";
 
 type LocationRow = {
   id: number;
@@ -49,7 +50,9 @@ export function LocationsTable({ locations }: Props) {
             <tr key={loc.id} className="hover:bg-slate-50">
               <Cell className="font-semibold text-slate-900">{loc.city}</Cell>
               <Cell>{loc.state}</Cell>
-              <Cell className="text-xs text-slate-600">{loc.slug}</Cell>
+              <Cell className="text-xs text-slate-600">
+                {generateLocationSlug(loc.city, loc.state)}
+              </Cell>
               <Cell>
                 <span
                   className={`rounded-full px-2 py-1 text-xs font-semibold ${
@@ -65,7 +68,7 @@ export function LocationsTable({ locations }: Props) {
               <Cell className="space-x-2">
                 <a
                   className="text-xs font-semibold text-sky-700 hover:text-sky-800"
-                  href={`/locations/${loc.slug}`}
+                  href={`/${generateLocationSlug(loc.city, loc.state)}`}
                   target="_blank"
                   rel="noreferrer"
                 >

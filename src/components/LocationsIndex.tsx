@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { generateLocationSlug } from "@/lib/slug";
 
 type LocationItem = {
   city: string;
@@ -78,7 +79,7 @@ export function LocationsIndex({ locations }: { locations: LocationItem[] }) {
               {visible.map((loc) => (
                 <Link
                   key={loc.slug}
-                  href={`/locations/${loc.slug}`}
+                  href={`/${generateLocationSlug(loc.city, loc.state)}`}
                   className="surface flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-900 transition hover:border-sky-200 hover:text-sky-700"
                 >
                   <span>Hood Cleaning in {loc.city}, {loc.state}</span>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getGlobalSettings, getPublishedLocations } from "@/lib/data";
 import { formatPhoneDisplay, formatPhoneHref } from "@/lib/phone";
+import { generateLocationSlug } from "@/lib/slug";
 
 export default async function Home() {
   const [settings, locations] = await Promise.all([getGlobalSettings(), getPublishedLocations()]);
@@ -54,7 +55,7 @@ export default async function Home() {
               {featuredLocations.map((loc) => (
                 <Link
                   key={loc.slug}
-                  href={`/locations/${loc.slug}`}
+                  href={`/${generateLocationSlug(loc.city, loc.state)}`}
                   className="flex items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-900 transition hover:border-sky-200 hover:text-sky-700"
                 >
                   <span>
