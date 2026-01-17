@@ -453,8 +453,48 @@ export default async function LocalPageDynamic({ params }: PageParams) {
 
   const content = localPage.contentJson as unknown as LocalPageContent;
   const canonical = `${settings.baseDomain}${slugStr}`;
-  const faqs = (localPage.faqJson as Array<{ question: string; answer: string }>) || [];
-  const internalLinks = (localPage.internalLinksJson as Array<{ text: string; url: string }>) || [];
+  const faqs = content.locationFAQ ?? [];
+  const phoneDisplay = formatPhoneDisplay(settings.primaryPhone || '818-518-8161');
+  const phoneHref = formatPhoneHref(settings.primaryPhone || '818-518-8161');
+  const longIntroParagraphs = content.longIntro
+    ? content.longIntro.split(/\n\n+/).filter(Boolean)
+    : [];
+  const mainBodyParagraphs = content.mainBody ? content.mainBody.split(/\n\n+/).filter(Boolean) : [];
+  const whatHappensNextParagraphs = content.whatTypicallyHappensNext
+    ? content.whatTypicallyHappensNext.split(/\n\n+/).filter(Boolean)
+    : [];
+  const neighborhoods = content.neighborhoodsOrAreas
+    ? content.neighborhoodsOrAreas
+        .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean)
+    : [];
+  const services = await getServices();
+  const testimonials = content.localTestimonials ?? [];
+  const directionsQuery = encodeURIComponent(
+    [localPage.city, localPage.state].filter(Boolean).join(', '),
+  );
+  const directionsUrl = directionsQuery
+    ? `https://www.google.com/maps/search/?api=1&query=${directionsQuery}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+        [localPage.city, localPage.state].filter(Boolean).join(', '),
+      )}`;
+  const mapQuery = encodeURIComponent([localPage.city, localPage.state].filter(Boolean).join(', '));
+  const mapSrc = mapQuery
+    ? `https://www.google.com/maps?q=${mapQuery}&output=embed`
+    : `https://www.google.com/maps?q=${encodeURIComponent(
+        [localPage.city, localPage.state].filter(Boolean).join(', '),
+      )}&output=embed`;
+  const buildNearbyHref = (pageSlug: string) => {
+    if (
+      pageSlug.startsWith(`/${localPage.primaryKeywordSlug}/`) &&
+      pageSlug.split('/').length === 3
+    ) {
+      const cityState = pageSlug.split('/')[2];
+      return `/${localPage.primaryKeywordSlug}-${cityState}`;
+    }
+    return pageSlug;
+  };
 
   // Build JSON-LD
   const localBusinessJsonLd = {
@@ -512,62 +552,273 @@ export default async function LocalPageDynamic({ params }: PageParams) {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <JsonLd data={localBusinessJsonLd} />
       <JsonLd data={faqJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
 
-      <article>
-        <h1 className="text-3xl font-semibold text-slate-900">{localPage.h1}</h1>
-
-        <div
-          className="prose prose-slate mt-6 max-w-none"
-          dangerouslySetInnerHTML={{ __html: localPage.renderedHtml }}
-        />
-
-        {faqs.length > 0 && (
-          <section className="mt-8">
-            <h2 className="text-2xl font-semibold text-slate-900">Frequently Asked Questions</h2>
-            <div className="mt-4 space-y-4">
-              {faqs.map((faq, i) => (
-                <div key={i} className="rounded-lg border border-slate-200 p-4">
-                  <h3 className="font-semibold text-slate-900">{faq.question}</h3>
-                  <p className="mt-2 text-sm text-slate-700">{faq.answer}</p>
-                </div>
-              ))}
+      <section className="panel grid gap-6 lg:grid-cols-[1.5fr,1fr]">
+        <div className="space-y-3">
+          <div className="pill bg-slate-900 text-white">
+            {localPage.city}, {localPage.state}
+          </div>
+          <h1 className="text-3xl font-semibold text-slate-900">{localPage.h1 || content.h1}</h1>
+          <p className="text-sm text-slate-600">
+            {content.shortIntro ||
+              `${settings.businessName} keeps kitchens inspection-ready across ${localPage.city}.`}
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <a href={phoneHref} className="pill solid px-5 py-3 text-[11px]">
+              Call {phoneDisplay}
+            </a>
+            <a href="#request-service" className="pill ghost px-5 py-3 text-[11px]">
+              Request service
+            </a>
+          </div>
+        </div>
+        <div className="surface p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+            Business details
+          </p>
+          <div className="divider my-3" />
+          <div className="space-y-1 text-sm text-slate-800">
+            <div className="font-semibold">{settings.businessName}</div>
+            {settings.defaultStreetAddress && <div>{settings.defaultStreetAddress}</div>}
+            <div>
+              {[settings.defaultCity, settings.defaultState, settings.defaultZip]
+                .filter(Boolean)
+                .join(', ')}
             </div>
-          </section>
-        )}
+            <div className="font-semibold text-slate-900">{phoneDisplay}</div>
+            {settings.primaryEmail && <div>{settings.primaryEmail}</div>}
+            <div className="pt-2">
+              <a
+                className="text-sm font-semibold text-sky-700 hover:text-sky-800"
+                href={directionsUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Get directions
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold text-slate-900">Locations & Nearby Help</h2>
-          <div className="mt-4 space-y-2">
-            <a
-              href={`/${localPage.primaryKeywordSlug}/locations/`}
-              className="block text-sky-600 hover:underline"
-            >
-              View all locations →
-            </a>
-            <a href="/contact" className="block text-sky-600 hover:underline">
-              Contact us →
-            </a>
-            {nearbyPages.length > 0 && (
-              <div className="mt-4">
-                <p className="text-sm font-semibold text-slate-700">Nearby locations:</p>
-                <ul className="mt-2 space-y-1">
-                  {nearbyPages.map((page) => (
-                    <li key={page.id}>
-                      <a href={page.slug} className="text-sm text-sky-600 hover:underline">
-                        {page.city || page.zip}, {page.state}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+      <section className="panel space-y-4">
+        <h2 className="text-2xl font-semibold text-slate-900">
+          Why {localPage.city} restaurants trust {settings.businessName}
+        </h2>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div className="space-y-3 text-sm text-slate-700">
+            {longIntroParagraphs.map((para, idx) => (
+              <p key={idx}>{para}</p>
+            ))}
+            {content.localStatsOrRegulationNotes && <p>{content.localStatsOrRegulationNotes}</p>}
+            {neighborhoods.length > 0 && (
+              <p>
+                We work in {localPage.city} neighborhoods like {neighborhoods.slice(0, 5).join(', ')}
+                {localPage.county ? ` and across ${localPage.county}.` : '.'}
+              </p>
             )}
           </div>
+          <div className="surface p-4 text-sm text-slate-700">
+            <p className="text-sm font-semibold text-slate-900">Compliance & uptime</p>
+            <ul className="mt-2 space-y-1">
+              <li>• NFPA-96 aligned cleanings with photo documentation.</li>
+              <li>• Rooftop fan degreasing and grease containment.</li>
+              <li>• Flexible scheduling to match prep and close times.</li>
+              <li>• Service stickers and reports inspectors expect in {localPage.state}.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="panel space-y-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold text-slate-900">Services in {localPage.city}</h2>
+            <p className="text-sm text-slate-600">
+              {content.servicesIntro ||
+                'Full degreasing of hoods, ducts, fans, and polished stainless to satisfy inspectors and keep airflow strong.'}
+            </p>
+          </div>
+          <Link href="/services" className="pill ghost px-4 py-2 text-[11px]">
+            View services
+          </Link>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {services.map((service) => (
+            <article key={service.slug} className="surface p-4">
+              <div className="text-sm font-semibold text-slate-900">
+                {service.name} — {localPage.city}
+              </div>
+              <p className="text-xs text-slate-600">{service.shortDescription}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="panel space-y-3">
+        <h3 className="text-2xl font-semibold text-slate-900">
+          How we keep you inspection-ready in {localPage.city}
+        </h3>
+        <ol className="grid gap-3 text-sm text-slate-700 sm:grid-cols-2 lg:grid-cols-3">
+          <li className="surface p-3">
+            <div className="text-sm font-semibold text-slate-900">1) Site check</div>
+            Document hoods, ducts, fans, and access for {localPage.city} inspectors.
+          </li>
+          <li className="surface p-3">
+            <div className="text-sm font-semibold text-slate-900">2) Scheduling</div>
+            After-hours or split shifts; coordinate docks/elevators in {localPage.county || localPage.state}.
+          </li>
+          <li className="surface p-3">
+            <div className="text-sm font-semibold text-slate-900">3) Cleaning</div>
+            Hood, duct, and rooftop fan degreasing with containment; filters rotated.
+          </li>
+          <li className="surface p-3">
+            <div className="text-sm font-semibold text-slate-900">4) Documentation</div>
+            Photo report, NFPA 96-aligned notes, and sticker updates for local AHJ review.
+          </li>
+          <li className="surface p-3">
+            <div className="text-sm font-semibold text-slate-900">5) Follow-up</div>
+            Cadence set to match volume and {localPage.city} fire/health expectations.
+          </li>
+        </ol>
+        {content.localStatsOrRegulationNotes && (
+          <p className="text-sm text-slate-600">{content.localStatsOrRegulationNotes}</p>
+        )}
+      </section>
+
+      <section className="panel space-y-3">
+        <h3 className="text-2xl font-semibold text-slate-900">
+          Hood cleaning built for {localPage.city}
+        </h3>
+        <div className="space-y-3 text-sm leading-6 text-slate-700">
+          {mainBodyParagraphs.map((para, idx) => (
+            <p key={idx}>{para}</p>
+          ))}
+        </div>
+      </section>
+
+      {whatHappensNextParagraphs.length > 0 && (
+        <section className="panel space-y-3">
+          <h3 className="text-2xl font-semibold text-slate-900">
+            What typically happens next in {localPage.city}
+          </h3>
+          <div className="space-y-3 text-sm leading-6 text-slate-700">
+            {whatHappensNextParagraphs.map((para, idx) => (
+              <p key={idx}>{para}</p>
+            ))}
+          </div>
         </section>
-      </article>
+      )}
+
+      <section className="panel grid gap-6 lg:grid-cols-[1.4fr,1fr]">
+        <div className="space-y-3">
+          <h3 className="text-xl font-semibold text-slate-900">
+            Areas we serve around {localPage.city}
+          </h3>
+          <p className="text-sm text-slate-600">
+            We cover nearby neighborhoods and business districts with the same documented cleanings.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {neighborhoods.map((area) => (
+              <span
+                key={area}
+                className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700"
+              >
+                {area}
+              </span>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-3 text-sm">
+            <Link className="font-semibold text-sky-700 hover:text-sky-800" href="/">
+              Home
+            </Link>
+            <Link
+              className="font-semibold text-sky-700 hover:text-sky-800"
+              href={`/${localPage.primaryKeywordSlug}/locations/`}
+            >
+              All locations
+            </Link>
+            <Link className="font-semibold text-sky-700 hover:text-sky-800" href="/services">
+              Services overview
+            </Link>
+            <Link className="font-semibold text-sky-700 hover:text-sky-800" href="/contact">
+              Contact
+            </Link>
+            {nearbyPages.map((page) => (
+              <Link
+                key={page.id}
+                className="font-semibold text-sky-700 hover:text-sky-800"
+                href={buildNearbyHref(page.slug)}
+              >
+                Nearby: {page.city || page.zip}, {page.state}
+              </Link>
+            ))}
+          </div>
+        </div>
+        <div className="surface p-4">
+          <h3 className="text-lg font-semibold text-slate-900">Compliance & safety</h3>
+          <p className="text-sm text-slate-600">
+            Crews follow NFPA-96 and local fire codes for {localPage.state}. Every visit includes
+            photos, sticker updates, and notes on fan balance, grease containment, and access panels.
+          </p>
+        </div>
+      </section>
+
+      {testimonials.length > 0 && (
+        <section className="panel space-y-3">
+          <h3 className="text-2xl font-semibold text-slate-900">Local testimonials</h3>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {testimonials.map((testimonial, idx) => (
+              <div key={idx} className="surface p-4">
+                <p className="text-sm text-slate-700">“{testimonial.quote}”</p>
+                <div className="mt-2 text-xs font-semibold text-slate-900">
+                  {testimonial.name}
+                  {testimonial.role ? ` — ${testimonial.role}` : ''} {testimonial.area ? ` · ${testimonial.area}` : ''}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {faqs.length > 0 && (
+        <section className="panel space-y-3">
+          <h3 className="text-2xl font-semibold text-slate-900">FAQs</h3>
+          <FAQAccordion faqs={faqs} />
+        </section>
+      )}
+
+      <section id="request-service" className="panel space-y-4">
+        <h3 className="text-2xl font-semibold text-slate-900">Request service</h3>
+        <p className="text-sm text-slate-600">
+          Tell us about your hood system, roof access, and timelines. We respond quickly.
+        </p>
+        <LeadForm locationSlug={localPage.slug} defaultCity={localPage.city} />
+      </section>
+
+      <section className="panel grid gap-4 lg:grid-cols-2">
+        <div className="space-y-2">
+          <h3 className="text-xl font-semibold text-slate-900">Map</h3>
+          <p className="text-sm text-slate-600">
+            Service area anchored in {localPage.city}, covering nearby suburbs and commercial zones.
+          </p>
+          <a
+            className="text-sm font-semibold text-sky-700 hover:text-sky-800"
+            href={directionsUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Open in Google Maps
+          </a>
+        </div>
+        <div className="overflow-hidden rounded-xl border border-slate-200">
+          <iframe src={mapSrc} className="h-[320px] w-full" loading="lazy" allowFullScreen />
+        </div>
+      </section>
     </div>
   );
 }
