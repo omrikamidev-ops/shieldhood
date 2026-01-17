@@ -11,7 +11,6 @@ import type { LocalPageContent } from '@/lib/localPages/types';
 import { prisma } from '@/lib/prisma';
 import { generateLocationSlug } from '@/lib/slug';
 import {
-  buildCanonicalUrl,
   buildFaqJsonLd,
   buildLocationDescription,
   buildLocationTitle,
@@ -59,10 +58,7 @@ export async function generateMetadata({ params }: PageParams): Promise<Metadata
 
     const title = buildLocationTitle(location, settings);
     const description = buildLocationDescription(location, settings);
-    const canonical = buildCanonicalUrl(
-      settings,
-      generateLocationSlug(location.city, location.state),
-    );
+    const canonical = settings.baseDomain + slugStr;
     const robots = buildRobots(location.published);
 
     return {

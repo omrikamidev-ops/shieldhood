@@ -139,7 +139,7 @@ export const getLocationsForSitemap = async () => {
   try {
     return await prisma.location.findMany({
       where: { published: true },
-      select: { slug: true, updatedAt: true },
+      select: { slug: true, city: true, state: true, updatedAt: true },
     });
   } catch (error) {
     console.error("Failed to load locations for sitemap", error);
