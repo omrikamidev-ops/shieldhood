@@ -34,6 +34,22 @@ export async function generateLocalPageDraft(request: GenerateDraftRequest) {
     throw new Error('ZIP must be 5 digits');
   }
 
+  if (city) {
+    const existingCityKeyword = await prisma.localPage.findFirst({
+      where: {
+        primaryKeywordSlug,
+        city: { equals: city, mode: 'insensitive' },
+        state,
+      },
+      select: { id: true, slug: true },
+    });
+    if (existingCityKeyword) {
+      throw new Error(
+        `A page already exists for ${primaryKeywordSlug} in ${city}, ${state}.`,
+      );
+    }
+  }
+
   // Generate slug if not provided
   const slug =
     providedSlug ||

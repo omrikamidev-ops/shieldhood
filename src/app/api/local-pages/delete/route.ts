@@ -15,14 +15,6 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'Local page not found' }, { status: 404 });
     }
 
-    // Only allow deletion of drafts
-    if (localPage.status === 'published') {
-      return NextResponse.json(
-        { error: 'Cannot delete published pages. Unpublish first.' },
-        { status: 400 },
-      );
-    }
-
     await prisma.localPage.delete({ where: { id } });
 
     return NextResponse.json({ success: true });

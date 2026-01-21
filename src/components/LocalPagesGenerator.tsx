@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { PRIMARY_KEYWORDS, INTENT_OPTIONS, isValidPrimaryKeyword } from '@/lib/localPagesConfig';
 import type { LocalPageData, BulkCsvRow } from '@/lib/localPages/types';
 
-type Tab = 'generate' | 'bulk' | 'recent';
+type Tab = 'generate' | 'bulk' | 'recent' | 'published';
 
 export function LocalPagesGenerator() {
   const router = useRouter();
@@ -280,12 +280,14 @@ export function LocalPagesGenerator() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    const confirm = window.confirm('Delete this draft?');
+  const handleDelete = async (page: LocalPageData) => {
+    const confirm = window.confirm(
+      `Permanently delete this page? This will remove it from the database and cannot be undone.\n\n${page.primaryKeywordSlug} — ${page.city || page.zip || 'N/A'}`,
+    );
     if (!confirm) return;
 
     try {
-      const res = await fetch(`/api/local-pages/delete?id=${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/local-pages/delete?id=${page.id}`, { method: 'DELETE' });
 
       if (!res.ok) {
         const data = await res.json();
@@ -316,6 +318,173 @@ export function LocalPagesGenerator() {
 
     setSelectedIds(new Set());
   };
+
+  const draftPages = recentPages.filter((page) => page.status === 'draft');
+  const publishedPages = recentPages.filter((page) => page.status === 'published');
+
+  const renderPagesTable = (pages: LocalPageData[], showDraftSelection: boolean) => (
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <table className="min-w-full divide-y divide-slate-200 text-sm">
+        <thead className="bg-slate-50">
+          <tr>
+            <th className="px-4 py-3 text-left">
+              {showDraftSelection && (
+                <input
+                  type="checkbox"
+                  checked={
+                    draftPages.length > 0 && draftPages.every((page) => selectedIds.has(page.id))
+                  }
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      const draftIds = new Set(draftPages.map((page) => page.id));
+                      setSelectedIds(draftIds);
+                    } else {
+                      setSelectedIds(new Set());
+                    }
+                  }}
+                />
+              )}
+            </th>
+            <th className="px-4 py-3 text-left font-semibold text-slate-900">Location</th>
+            <th className="px-4 py-3 text-left font-semibold text-slate-900">Keyword</th>
+            <th className="px-4 py-3 text-left font-semibold text-slate-900">Status</th>
+            <th className="px-4 py-3 text-left font-semibold text-slate-900">Uniqueness</th>
+            <th className="px-4 py-3 text-left font-semibold text-slate-900">Flags</th>
+            <th className="px-4 py-3 text-left font-semibold text-slate-900">Actions</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-200">
+          {pages.map((page) => (
+            <tr key={page.id} className="hover:bg-slate-50">
+              <td className="px-4 py-3">
+                {showDraftSelection && page.status === 'draft' && (
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(page.id)}
+                    onChange={(e) => {
+                      const newSet = new Set(selectedIds);
+                      if (e.target.checked) {
+                        newSet.add(page.id);
+                      } else {
+                        newSet.delete(page.id);
+                      }
+                      setSelectedIds(newSet);
+                    }}
+                  />
+                )}
+              </td>
+              <td className="px-4 py-3">
+                <div className="font-semibold text-slate-900">
+                  {page.city || page.zip || 'N/A'}
+                </div>
+                {page.status === 'published' ? (
+                  <a
+                    href={buildLiveUrl(page.slug)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-sky-700 hover:underline"
+                  >
+                    {page.slug}
+                  </a>
+                ) : (
+                  <div className="text-xs text-slate-600">{page.slug}</div>
+                )}
+              </td>
+              <td className="px-4 py-3 text-slate-700">{page.primaryKeywordSlug}</td>
+              <td className="px-4 py-3">
+                <span
+                  className={`rounded-full px-2 py-1 text-xs font-semibold ${
+                    page.status === 'published'
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-amber-100 text-amber-800'
+                  }`}
+                >
+                  {page.status}
+                </span>
+              </td>
+              <td className="px-4 py-3">
+                {page.uniquenessScore !== null && (
+                  <span
+                    className={`rounded-full px-2 py-1 text-xs font-semibold ${
+                      Number(page.uniquenessScore) >= 0.9
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}
+                  >
+                    {Math.round(Number(page.uniquenessScore) * 100)}%
+                  </span>
+                )}
+              </td>
+              <td className="px-4 py-3">
+                {page.safetyFlags.length > 0 ? (
+                  <div className="flex flex-wrap gap-1">
+                    {page.safetyFlags.slice(0, 3).map((flag) => (
+                      <span
+                        key={flag}
+                        className="rounded-full bg-red-100 px-2 py-1 text-xs text-red-800"
+                      >
+                        {flag}
+                      </span>
+                    ))}
+                    {page.safetyFlags.length > 3 && (
+                      <span className="text-xs text-slate-600">
+                        +{page.safetyFlags.length - 3}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <span className="text-xs text-slate-400">None</span>
+                )}
+              </td>
+              <td className="px-4 py-3">
+                <div className="flex gap-2">
+                  {page.status === 'published' ? (
+                    <>
+                      <a
+                        href={page.slug}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-sky-600 hover:underline"
+                      >
+                        View
+                      </a>
+                      <button
+                        onClick={() => handleUnpublish(page.id)}
+                        className="text-xs text-amber-600 hover:underline"
+                      >
+                        Unpublish
+                      </button>
+                      <button
+                        onClick={() => handleDelete(page)}
+                        className="text-xs text-red-600 hover:underline"
+                      >
+                        Delete
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => handlePublish(page.id)}
+                        className="text-xs text-green-600 hover:underline"
+                      >
+                        Publish
+                      </button>
+                      <button
+                        onClick={() => handleDelete(page)}
+                        className="text-xs text-red-600 hover:underline"
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 
   return (
     <div className="space-y-4">
@@ -350,6 +519,16 @@ export function LocalPagesGenerator() {
           }`}
         >
           Recent Pages
+        </button>
+        <button
+          onClick={() => setActiveTab('published')}
+          className={`px-4 py-2 text-sm font-semibold ${
+            activeTab === 'published'
+              ? 'border-b-2 border-sky-600 text-sky-800'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          Published Pages
         </button>
       </div>
 
@@ -528,8 +707,7 @@ export function LocalPagesGenerator() {
           <div className="flex items-center justify-between">
             <div>
               <span className="text-sm text-slate-600">
-                {recentPages.filter((p) => p.status === 'draft').length} drafts,{' '}
-                {recentPages.filter((p) => p.status === 'published').length} published
+                {draftPages.length} drafts, {publishedPages.length} published
               </span>
             </div>
             {selectedIds.size > 0 && (
@@ -541,165 +719,19 @@ export function LocalPagesGenerator() {
               </button>
             )}
           </div>
+          {renderPagesTable(recentPages, true)}
+        </div>
+      )}
 
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <table className="min-w-full divide-y divide-slate-200 text-sm">
-              <thead className="bg-slate-50">
-                <tr>
-                  <th className="px-4 py-3 text-left">
-                    <input
-                      type="checkbox"
-                      checked={
-                        recentPages.filter((p) => p.status === 'draft').length > 0 &&
-                        recentPages
-                          .filter((p) => p.status === 'draft')
-                          .every((p) => selectedIds.has(p.id))
-                      }
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          const draftIds = new Set(
-                            recentPages.filter((p) => p.status === 'draft').map((p) => p.id),
-                          );
-                          setSelectedIds(draftIds);
-                        } else {
-                          setSelectedIds(new Set());
-                        }
-                      }}
-                    />
-                  </th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-900">Location</th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-900">Keyword</th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-900">Status</th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-900">Uniqueness</th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-900">Flags</th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-900">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200">
-                {recentPages.map((page) => (
-                  <tr key={page.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3">
-                      {page.status === 'draft' && (
-                        <input
-                          type="checkbox"
-                          checked={selectedIds.has(page.id)}
-                          onChange={(e) => {
-                            const newSet = new Set(selectedIds);
-                            if (e.target.checked) {
-                              newSet.add(page.id);
-                            } else {
-                              newSet.delete(page.id);
-                            }
-                            setSelectedIds(newSet);
-                          }}
-                        />
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="font-semibold text-slate-900">
-                        {page.city || page.zip || 'N/A'}
-                      </div>
-                      {page.status === 'published' ? (
-                        <a
-                          href={buildLiveUrl(page.slug)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-sky-700 hover:underline"
-                        >
-                          {page.slug}
-                        </a>
-                      ) : (
-                        <div className="text-xs text-slate-600">{page.slug}</div>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-slate-700">{page.primaryKeywordSlug}</td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`rounded-full px-2 py-1 text-xs font-semibold ${
-                          page.status === 'published'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-amber-100 text-amber-800'
-                        }`}
-                      >
-                        {page.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      {page.uniquenessScore !== null && (
-                        <span
-                          className={`rounded-full px-2 py-1 text-xs font-semibold ${
-                            Number(page.uniquenessScore) >= 0.9
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-red-100 text-red-800'
-                          }`}
-                        >
-                          {Math.round(Number(page.uniquenessScore) * 100)}%
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      {page.safetyFlags.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {page.safetyFlags.slice(0, 3).map((flag) => (
-                            <span
-                              key={flag}
-                              className="rounded-full bg-red-100 px-2 py-1 text-xs text-red-800"
-                            >
-                              {flag}
-                            </span>
-                          ))}
-                          {page.safetyFlags.length > 3 && (
-                            <span className="text-xs text-slate-600">
-                              +{page.safetyFlags.length - 3}
-                            </span>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-xs text-slate-400">None</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-2">
-                        {page.status === 'published' ? (
-                          <>
-                            <a
-                              href={page.slug}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-xs text-sky-600 hover:underline"
-                            >
-                              View
-                            </a>
-                            <button
-                              onClick={() => handleUnpublish(page.id)}
-                              className="text-xs text-amber-600 hover:underline"
-                            >
-                              Unpublish
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              onClick={() => handlePublish(page.id)}
-                              className="text-xs text-green-600 hover:underline"
-                            >
-                              Publish
-                            </button>
-                            <button
-                              onClick={() => handleDelete(page.id)}
-                              className="text-xs text-red-600 hover:underline"
-                            >
-                              Delete
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {/* Published Pages Tab */}
+      {activeTab === 'published' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-sm text-slate-600">{publishedPages.length} published</span>
+            </div>
           </div>
+          {renderPagesTable(publishedPages, false)}
         </div>
       )}
     </div>
