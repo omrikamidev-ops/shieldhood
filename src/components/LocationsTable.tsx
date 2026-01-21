@@ -14,16 +14,28 @@ type LocationRow = {
 
 type Props = {
   locations: LocationRow[];
+  onDeleted?: () => void;
 };
 
-export function LocationsTable({ locations }: Props) {
+export function LocationsTable({ locations, onDeleted }: Props) {
   const router = useRouter();
 
   const handleDelete = async (id: number) => {
     const confirmDelete = confirm("Delete this location?");
     if (!confirmDelete) return;
 
-    await fetch(`/api/locations/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/locations/${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      alert(data?.error || "Failed to delete location.");
+      return;
+    }
+
+    if (onDeleted) {
+      onDeleted();
+      return;
+    }
+
     router.refresh();
   };
 

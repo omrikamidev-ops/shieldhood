@@ -4,8 +4,18 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { PRIMARY_KEYWORDS, INTENT_OPTIONS, isValidPrimaryKeyword } from '@/lib/localPagesConfig';
 import type { LocalPageData, BulkCsvRow } from '@/lib/localPages/types';
+import { LocationsTable } from '@/components/LocationsTable';
 
-type Tab = 'generate' | 'bulk' | 'recent' | 'published';
+type Tab = 'generate' | 'bulk' | 'recent' | 'published' | 'locations';
+
+type LocationRow = {
+  id: number;
+  city: string;
+  state: string;
+  slug: string;
+  published: boolean;
+  updatedAt: string | Date;
+};
 
 export function LocalPagesGenerator() {
   const router = useRouter();
@@ -40,10 +50,12 @@ export function LocalPagesGenerator() {
   // Recent Pages tab state
   const [recentPages, setRecentPages] = useState<LocalPageData[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [locations, setLocations] = useState<LocationRow[]>([]);
 
   // Load recent pages
   useEffect(() => {
     loadRecentPages();
+    loadLocations();
   }, []);
 
   const loadRecentPages = async () => {
@@ -53,6 +65,16 @@ export function LocalPagesGenerator() {
       setRecentPages(data);
     } catch (err) {
       console.error('Failed to load recent pages:', err);
+    }
+  };
+
+  const loadLocations = async () => {
+    try {
+      const res = await fetch('/api/locations');
+      const data = await res.json();
+      setLocations(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('Failed to load locations:', err);
     }
   };
 
@@ -530,6 +552,16 @@ export function LocalPagesGenerator() {
         >
           Published Pages
         </button>
+        <button
+          onClick={() => setActiveTab('locations')}
+          className={`px-4 py-2 text-sm font-semibold ${
+            activeTab === 'locations'
+              ? 'border-b-2 border-sky-600 text-sky-800'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          Location Pages
+        </button>
       </div>
 
       {/* Error message */}
@@ -732,6 +764,19 @@ export function LocalPagesGenerator() {
             </div>
           </div>
           {renderPagesTable(publishedPages, false)}
+        </div>
+      )}
+
+      {/* Location Pages Tab */}
+      {activeTab === 'locations' && (
+        <div className="space-y-4">
+          <div>
+            <p className="text-sm text-slate-600">
+              These are the legacy location pages that appear on the site (ex: Thousand Oaks).
+              Manage or delete them here.
+            </p>
+          </div>
+          <LocationsTable locations={locations} onDeleted={loadLocations} />
         </div>
       )}
     </div>
